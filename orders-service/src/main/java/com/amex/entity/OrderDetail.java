@@ -22,7 +22,6 @@ public class OrderDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	//private Integer orderId;
 	private Integer itemId;
 	private Integer quantity;
 	private Double totalPrice;
@@ -32,14 +31,6 @@ public class OrderDetail {
     @JoinColumn(name="ORDER_ID", nullable=false)
 	private Order order;
 	
-	/*
-	public Integer getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
-	}
-	*/
 	public Integer getItemId() {
 		return itemId;
 	}

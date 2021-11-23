@@ -6,6 +6,7 @@ package com.amex.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amex.model.OrderRequest;
 import com.amex.model.OrderResponse;
+import com.amex.service.OrdersService;
 
 /**
  * @author EPAM
@@ -26,6 +28,9 @@ import com.amex.model.OrderResponse;
 @RestController
 @RequestMapping("/orders")
 public class OrdersController {
+	
+	@Autowired
+	private OrdersService service;
 
 	@GetMapping(path="/{orderId}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<OrderResponse> getOrderById(@PathVariable(required = true) Integer orderId){
@@ -38,8 +43,8 @@ public class OrdersController {
 	}
 
 	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<OrderResponse>> createOrder(@RequestBody(required = true) OrderRequest request){
-		return new ResponseEntity<>(Arrays.asList(new OrderResponse()), HttpStatus.OK);
+	public ResponseEntity<OrderResponse> createOrder(@RequestBody(required = true) OrderRequest request){
+		return new ResponseEntity<>(service.createOrder(request), HttpStatus.OK);
 	}
 
 }
