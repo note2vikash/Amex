@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -20,19 +22,24 @@ public class OrderDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Integer orderId;
+	//private Integer orderId;
 	private Integer itemId;
 	private Integer quantity;
 	private Double totalPrice;
 	private Integer offerId;
 	private Double discountedPrice;
+	@ManyToOne
+    @JoinColumn(name="ORDER_ID", nullable=false)
+	private Order order;
 	
+	/*
 	public Integer getOrderId() {
 		return orderId;
 	}
 	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
 	}
+	*/
 	public Integer getItemId() {
 		return itemId;
 	}
@@ -66,7 +73,11 @@ public class OrderDetail {
 	public Integer getId() {
 		return id;
 	}
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 	
-	
-
 }

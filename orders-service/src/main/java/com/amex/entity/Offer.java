@@ -3,10 +3,13 @@
  */
 package com.amex.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -21,6 +24,8 @@ public class Offer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String name;
+	@ManyToMany(mappedBy = "offers")
+	private List<Item> items;
 	
 	public String getName() {
 		return name;
@@ -30,6 +35,12 @@ public class Offer {
 	}
 	public Integer getId() {
 		return id;
+	}
+	public List<Item> getItems() {
+		return items;
+	}
+	public void setItems(List<Item> items) {
+		this.items = items;
 	}
 
 }
