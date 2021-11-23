@@ -18,6 +18,7 @@ public class OrderResponse extends OrderRequest {
 	private Integer oederId;
 	private Date createdOn;
 	private List<ItemResponse> itemsOrdered;
+	private Double totalCost;
 	@JsonIgnore
 	private List<ItemRequest> items;
 	
@@ -38,5 +39,11 @@ public class OrderResponse extends OrderRequest {
 	}
 	public void setItemsOrdered(List<ItemResponse> itemsOrdered) {
 		this.itemsOrdered = itemsOrdered;
+	}
+	public Double getTotalCost() {
+		return totalCost;
+	}
+	public void setTotalCost(Double totalCost) {
+		this.totalCost = totalCost;
 	}
 }
