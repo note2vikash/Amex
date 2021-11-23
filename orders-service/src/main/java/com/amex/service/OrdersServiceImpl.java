@@ -31,22 +31,26 @@ import com.amex.repository.OrdersRepository;
  */
 @Service
 public class OrdersServiceImpl implements OrdersService {
-	
+
 	@Autowired
 	private ItemsRepository itemsRepository;
-	
+
 	@Autowired
 	private OrdersRepository ordersRepository;
-	
+
 	@Override
 	public OrderResponse getOrderById(Integer orderId) {
-		return null;
+		Order order = ordersRepository.getById(orderId);
+		return generateResponse(order);
 	}
 
 	@Override
 	public List<OrderResponse> getAllOrders() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Order> orders = ordersRepository.findAll(Sort.by("id"));
+		final List<OrderResponse> orderResponses = new ArrayList<>();
+		orders.forEach(order->orderResponses.add(generateResponse(order)));
+		return orderResponses;
+
 	}
 
 	@Override
@@ -102,6 +106,39 @@ public class OrdersServiceImpl implements OrdersService {
 		return response;
 	}
 
+	/**
+	 * 
+	 * @param order
+	 * @return
+	 */
+	private OrderResponse generateResponse(Order order) {
+		OrderResponse response = new OrderResponse();
+		response.setOederId(order.getId());
+		response.setCreatedOn(order.getCreatedOn());
+		response.setCustomerId(order.getCustomerId());
+		List<ItemResponse> itemsOdered = new ArrayList<>();
+		Double totalCost = 0.0;
+		List<OrderDetail> orderDetails = order.getOrderDetails();
+		for(OrderDetail details : orderDetails) {
+			ItemResponse itemResponse = new ItemResponse();
+			itemResponse.setItemId(details.getItemId());
+			itemResponse.setQuantity(details.getQuantity());
+			itemResponse.setOfferId(details.getOfferId());
+			totalCost = totalCost + details.getDiscountedPrice();
+			itemsOdered.add(itemResponse);
+		}
+		response.setItemsOrdered(itemsOdered);
+		response.setTotalCost(totalCost);
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param item
+	 * @param offerId
+	 * @param quantity
+	 * @return
+	 */
 	private Double getDiscountedPrice(Item item, Integer offerId, Integer quantity) {
 		Double price = 0.0;
 		if (item.getId() == 1 && offerId == 1) {
@@ -125,4 +162,5 @@ public class OrdersServiceImpl implements OrdersService {
 		}
 		return price;
 	}
+
 }
