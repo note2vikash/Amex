@@ -37,7 +37,7 @@ public class OrdersServiceImpl implements OrdersService {
 
 	@Autowired
 	private OrdersRepository ordersRepository;
-
+	
 	@Override
 	public OrderResponse getOrderById(Integer orderId) {
 		Order order = ordersRepository.getById(orderId);
@@ -54,7 +54,7 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional()
 	public OrderResponse createOrder(OrderRequest request) {
 		// Fetch all Items
 		List<Item> allItems = itemsRepository.findAll(Sort.by("id"));
@@ -83,6 +83,7 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetail.setQuantity(quantity);
 			orderDetail.setTotalPrice(quantity*actualPrice);
 			orderDetail.setOfferId(offerId);
+			orderDetail.setOrder(order);
 			// Calculate discounted price
 			Double discountedPrice = getDiscountedPrice(item, offerId, quantity);
 			orderDetail.setDiscountedPrice(discountedPrice);

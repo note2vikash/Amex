@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ORDER_DETAILS")
 public class OrderDetail {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -28,9 +28,9 @@ public class OrderDetail {
 	private Integer offerId;
 	private Double discountedPrice;
 	@ManyToOne
-    @JoinColumn(name="ORDER_ID", nullable=false)
+	@JoinColumn(name="ORDER_ID", referencedColumnName = "id", nullable=false)
 	private Order order;
-	
+
 	public Integer getItemId() {
 		return itemId;
 	}
@@ -70,5 +70,4 @@ public class OrderDetail {
 	public void setOrder(Order order) {
 		this.order = order;
 	}
-	
 }
