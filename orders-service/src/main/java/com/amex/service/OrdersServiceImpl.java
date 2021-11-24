@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,12 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Override
 	public OrderResponse getOrderById(Integer orderId) {
-		Order order = ordersRepository.getById(orderId);
+		Order order = null;
+		try {
+			order = ordersRepository.getById(orderId);
+		} catch (DataException e) {
+			throw new RuntimeException("Bad Request : " + e.getLocalizedMessage());
+		}
 		return generateResponse(order);
 	}
 
@@ -93,7 +99,9 @@ public class OrdersServiceImpl implements OrdersService {
 			ItemResponse itemResponse = new ItemResponse();
 			itemResponse.setItemId(itemId);
 			itemResponse.setQuantity(quantity);
+			itemResponse.setTotalCost(quantity*actualPrice);
 			itemResponse.setOfferId(offerId);
+			itemResponse.setEffectiveCost(discountedPrice);
 			itemsOdered.add(itemResponse);
 		}
 		order.setOrderDetails(orderDetails);
@@ -113,6 +121,7 @@ public class OrdersServiceImpl implements OrdersService {
 	 * @return
 	 */
 	private OrderResponse generateResponse(Order order) {
+		List<Item> allItems = itemsRepository.findAll(Sort.by("id"));
 		OrderResponse response = new OrderResponse();
 		response.setOederId(order.getId());
 		response.setCreatedOn(order.getCreatedOn());
@@ -121,11 +130,14 @@ public class OrdersServiceImpl implements OrdersService {
 		Double totalCost = 0.0;
 		List<OrderDetail> orderDetails = order.getOrderDetails();
 		for(OrderDetail details : orderDetails) {
+			Item item = allItems.get(details.getItemId()-1);
 			ItemResponse itemResponse = new ItemResponse();
 			itemResponse.setItemId(details.getItemId());
 			itemResponse.setQuantity(details.getQuantity());
 			itemResponse.setOfferId(details.getOfferId());
 			totalCost = totalCost + details.getDiscountedPrice();
+			itemResponse.setTotalCost(item.getPrice()*details.getQuantity());
+			itemResponse.setEffectiveCost(details.getDiscountedPrice());
 			itemsOdered.add(itemResponse);
 		}
 		response.setItemsOrdered(itemsOdered);
@@ -151,7 +163,7 @@ public class OrdersServiceImpl implements OrdersService {
 				if (quantity % 3 == 0) {
 					price = (item.getPrice()*2)*quantity/3;
 				}else {
-					while(quantity > 1) {
+					while(quantity > 3) {
 						int extra = quantity%3;
 						quantity = quantity/3;
 						price = price + ((item.getPrice()*2)*quantity + item.getPrice()*extra);
