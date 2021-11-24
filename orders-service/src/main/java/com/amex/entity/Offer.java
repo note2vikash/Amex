@@ -42,5 +42,8 @@ public class Offer {
 	public void setItems(List<Item> items) {
 		this.items = items;
 	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 }
