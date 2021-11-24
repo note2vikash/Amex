@@ -3,7 +3,6 @@
  */
 package com.amex.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +33,12 @@ public class OrdersController {
 
 	@GetMapping(path="/{orderId}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<OrderResponse> getOrderById(@PathVariable(required = true) Integer orderId){
-		return new ResponseEntity<>(new OrderResponse(), HttpStatus.OK);
+		return new ResponseEntity<>(service.getOrderById(orderId), HttpStatus.OK);
 	}
 
 	@GetMapping(consumes = {MediaType.ALL_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<OrderResponse>> getOrders(){
-		return new ResponseEntity<>(Arrays.asList(new OrderResponse()), HttpStatus.OK);
+		return new ResponseEntity<>(service.getAllOrders(), HttpStatus.OK);
 	}
 
 	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
